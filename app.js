@@ -1,11 +1,8 @@
-// express.js
+import express from 'express';
+import { config } from 'dotenv';
 
-import express from "express";
-import { config } from "dotenv";
-
-import "./source/models/__loaddatabase.js";
-import { mainPage, detailPage } from "./source/controllers/todos.js";
-import router from "./source/router.js";
+import './source/models/__loaddatabase.js';
+import router from './source/router.js';
 
 config();
 
@@ -15,15 +12,9 @@ const app = express();
 
 app.locals.appTitle = process.env.APPTITLE || 'Express';
 
-app.set("view engine", "ejs");
-app.set("views", "./source/templates");
+app.set('view engine', 'ejs');
+app.set('views', './source/templates');
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-app.use("/", router);
+app.use('/', router);
 
 app.listen(port);
-
-app.enable('async');
-
