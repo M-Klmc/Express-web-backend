@@ -5,14 +5,27 @@ export function requestToContext(req, res, next) {
     next();
 }
 
-export function handleErrors(req, res, next) {
+export async function handleErrors(req, res, next) {
     const r = validationResult(req);
     if(!r.isEmpty()) {
-        return res.redirect('back');
+        await req.flash('errors', r.mapped());
+        await req.flash('body', req.body);
+        return res.redirect('/add');
     }
-    else {
-        req.body = matchedData(req);
-        next();
-    }
+    req.body = matchedData(req);
+    next();
 }
 
+export function extendFlashAPI(req, res, next) {
+    req.getFlash = async function(name) {
+        const d = await this.consumeFlash(name);
+        return d.length > 0 ? d[0] : undefined;
+    }
+    next();
+}
+
+export async function getErrors(req, res, next) {
+    res.locals.errors = await req.getFlash('errors') || {};
+    res.locals.body = await req.getFlash('body') || {};
+    next();
+}

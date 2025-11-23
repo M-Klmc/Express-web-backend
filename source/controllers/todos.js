@@ -2,6 +2,7 @@ import createError from 'http-errors';
 
 import { getList, getItem, addItem, setDoneItem, deleteItem }
     from '../models/todos.js';
+import { body, validationResult } from 'express-validator';
 
 export function mainPage(req, res) {
     let list = getList();
@@ -47,10 +48,21 @@ export function detailPage(req, res) {
 }
 
 export function addPage(req, res) {
-    res.render('add', { title: 'Добавление дела' });
+    res.render('add', {
+        title: 'Добавление дела',
+        body: res.locals.body || {},
+        errors: res.locals.errors || {}
+    });
 }
 
-export function add(req, res) {
+export async function add(req, res) {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        await req.flash('errors', errors.mapped());
+        await req.flash('body', req.body);
+        return res.redirect('/add')
+    }
     const todo = {
         title: req.body.title,
         desc: req.body.desc || '',
