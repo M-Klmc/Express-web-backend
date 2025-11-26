@@ -1,5 +1,4 @@
-import { database, saveDatabase, getObjectId }
-       from "./__loaddatabase.js";
+import { database, saveDatabase, getObjectId }  from "./__loaddatabase.js";
 
 const todos = database.todos;
 

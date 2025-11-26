@@ -1,4 +1,4 @@
-import { database, getObjectId, saveDatabase } from "./__loaddatabase";
+import { database, getObjectId, saveDatabase } from "./__loaddatabase.js";
 
 const users = database.users;
 
@@ -8,6 +8,6 @@ export function getUser(name) {
 
 export function addUser(user) {
     user._id = getObjectId();
-    user.push(user);
+    users.push(user);
     saveDatabase();
 }

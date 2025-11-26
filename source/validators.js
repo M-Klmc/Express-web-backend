@@ -1,5 +1,5 @@
 import { body } from 'express-validator';
-import { getUser } from './models/users';
+import { getUser } from './models/users.js';
 
 const todoV = [
     body('title').isString().trim().notEmpty()

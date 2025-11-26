@@ -13,6 +13,7 @@ import { todoV, registerV } from './validators.js';
 import { mainErrorHandler, error500Handler } from './error-handlers.js';
 import { cookie } from 'express-validator';
 import { register } from 'node:module';
+import { register as registerHandler, registerPage } from './controllers/users.js';
 
 const FileStore = _fileStore(session);
 
@@ -49,8 +50,8 @@ router.use(flash({sessionKeyName: 'flash-message'}));
 router.use(extendFlashAPI);
 router.use(loadCurrentUser);
 
-router.get('/register', isGuest, getErrors, './validators.js');
-router.post('/register', isGuest, registerV, handleErrors, register);
+router.get('/register', isGuest, getErrors, registerPage);
+router.post('/register', isGuest, registerV, handleErrors, registerHandler);
 router.get('/add', getErrors, addPage);
 router.post('/add', addendumWrapper, todoV, add);
 router.get('/:id', detailPage);
