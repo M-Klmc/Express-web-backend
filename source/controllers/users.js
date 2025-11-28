@@ -1,7 +1,8 @@
 import { randomBytes } from 'node:crypto';
 
 import { pbkdf2Promisified } from '../utility.js';
-import { addUser } from '../models/users.js';
+import { addUser, removeUser } from '../models/users.js';
+
 
 export async function registerPage (req, res) {
     res.render('register', { title: 'Регистрация' });
@@ -55,4 +56,21 @@ export function logout (req, res, next) {
             })
         }
     })
+}
+
+export function deleteUser(req, res, next) {
+    const userRemoved = removeUser(req.user.id);
+
+    if (userRemoved) {
+        delete req.session.user;
+        req.session.save((err) => {
+            if(err) {
+                next(err);
+            } else {
+                res.redirect('/');
+            }
+        });
+    } else {
+        res.status(404).send('Пользователь не найден');
+    }
 }

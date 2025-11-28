@@ -25,6 +25,11 @@
                 <% if (req.user) { %>
                 <a href="/add/"
                     class="button">Добавить дело</a>
+                    
+                    <form action="/delete-account" method="post" class="horizontal">
+                        <input type="submit" class="error" value="Удалить Аккаунт" onclick="return confirm('Вы уверены?')">
+                    </form>
+
                     <form action="/logout" method="post" class="horizontal">
                         <input type="submit" class="warning" value="Выйти">
                     </form>

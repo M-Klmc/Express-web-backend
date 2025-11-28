@@ -15,3 +15,13 @@ export function addUser(user) {
     users.push(user);
     saveDatabase();
 }
+
+export function removeUser(userId) {
+    const userIndex = users.findIndex((user) => user._id === userId || user.username === userId);
+    if(userIndex > -1) {
+        users.splice(userIndex, 1);
+        saveDatabase()
+        return true;
+    }
+    return false;
+}

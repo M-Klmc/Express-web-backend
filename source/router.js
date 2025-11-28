@@ -13,7 +13,7 @@ import { todoV, registerV, loginV } from './validators.js';
 import { mainErrorHandler, error500Handler } from './error-handlers.js';
 import { cookie } from 'express-validator';
 import { register } from 'node:module';
-import { register as registerHandler, registerPage,loginPage, login, logout  } from './controllers/users.js';
+import { register as registerHandler, registerPage,loginPage, login, logout, deleteUser  } from './controllers/users.js';
 
 const FileStore = _fileStore(session);
 
@@ -57,6 +57,7 @@ router.post('/login', isGuest, loginV, handleErrors, login);
 
 router.use(isLoggedIn);
 
+router.post('/delete-account', deleteUser);
 router.post('/logout', logout);
 
 router.get('/add', getErrors, addPage);
