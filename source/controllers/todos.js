@@ -94,14 +94,24 @@ export async function remove(req, res, next) {
         const t = getItem(req.params.id, req.user.id);
         if(!t)
             throw createError(404, 'Запрошенное дело не существует');
-        if(t.addendum)
-            await rm(join(currentDir, 'storage', 'uploaded', t.addendum));
+
+        if(t.addendum) {
+            try {
+                await rm(join(currentDir, 'storage', 'uploaded', t.addendum));
+            } catch (err) {
+                if(err.code !== 'ENOENT') {
+                throw err;
+                }
+            
+            }
+        }
         deleteItem(t._id, req.user.id);
         res.redirect('/');
     } catch (err) {
         next(err);
     }
 }
+
 
 export function setOrder(req, res) {
     res.cookie('doneAtLast', req.body.done_at_last);
