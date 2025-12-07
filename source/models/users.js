@@ -9,7 +9,7 @@ export async function addUser(user) {
     await oUser.save();
 }
 
-export async function removeUser(userId) {
-    const result = await User.deleteOne({_id: userId});
+export async function removeUser(username) {
+    const result = await User.deleteOne({username: username});
     return result.deleteCount > 0;
 }
