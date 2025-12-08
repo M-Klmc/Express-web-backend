@@ -37,3 +37,41 @@ export async function deleteItem(id, user) {
     const deletedTodo = await Todo.findOneAndDelete({ _id: id, user: user});
     return deletedTodo !== null;    
 }
+
+export async function getMostActiveUsers() {
+    const result = [];
+
+    result[0] = await Todo.aggregate([
+        {
+            $lookup: {
+                from: 'users',
+                localField: 'user',
+                foreignField: '_id',
+                as: 'userObj'
+            }
+        },
+        { $unwind: '$userObj' },
+        { $group: { _id: '$userObj.username', cnt: { $sum: 1 } } },
+        { $sort: { cnt: -1 } },
+        { $limit: 3}
+    ]);
+
+    result[1] = await Todo.aggregate([
+        { $match: { done: true } },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'user',
+                    foreignField: '_id',
+                    as: 'userObj'
+                }
+            },
+            { $unwind: '$userObj'},
+            { $group: { _id: '$userObj.username', cnt: { $sum: 1 } } },
+            { $sort: { cnt: -1 } },
+            { $limit: 3 }
+    ]);
+
+    return result;
+}
+

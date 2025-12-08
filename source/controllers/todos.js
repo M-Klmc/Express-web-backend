@@ -2,7 +2,7 @@
 
 import createError from 'http-errors';
 
-import { getList, getItem, addItem, setDoneItem, deleteItem } from '../models/todos.js';
+import { getList, getItem, addItem, setDoneItem, deleteItem, getMostActiveUsers } from '../models/todos.js';
 import { body, validationResult } from 'express-validator';
 
 import { addendumUploader } from '../uploaders.js';
@@ -146,3 +146,11 @@ export function addendumWrapper(req, res, next) {
 
 }
 
+export async function  mostActiveUsersPage(req, res) {
+    const r = await getMostActiveUsers();
+    res.render('most-active', {
+        title: 'Самые активные пользователи',
+        mostActiveAll: r[0],
+        mostActiveDone: r[1]
+    });
+}
