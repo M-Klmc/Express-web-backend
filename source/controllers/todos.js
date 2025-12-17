@@ -13,7 +13,7 @@ import { currentDir } from '../utility.js';
 
 export async function mainPage(req, res) {
     let list = await getList(req.user.id);
-    if(req.cookies.doneAtLast === '1') {
+    if(req.query.doneAtLast === '1') {
         list = [...list];
         list.sort((el1, el2) => {
             if (el1.done !== el2.done) {
@@ -21,6 +21,7 @@ export async function mainPage(req, res) {
             }
             return new Date(el1.createdAt) - new Date(el2.createdAt);
         })
+        res.json({ todos: list });
     }
 
     if (req.query.search) {
@@ -48,11 +49,7 @@ export async function detailPage(req, res, next) {
 
     if (!t)
         throw createError(404, 'Запрошенное дело не существует');
-
-    res.render('detail', {
-        todo: t,
-        title: t.title
-    });
+    res.json({ todo: t.toJSON() });
     } catch (err) {
         next(err);
     }
@@ -82,14 +79,16 @@ export async function add(req, res) {
     if (req.file)
         todo.addendum = req.file.filename;
     await addItem(todo);
-    res.redirect('/');
+    res.status(202);
+    res.end();
 }
 
 export async function setDone(req, res, next) {
     try {
-        if ( await setDoneItem(req.params.id, req.user.id))
-            res.redirect('/');
-    else
+        if (await setDoneItem(req.params.id, req.user.id)) {
+            res.status(202);
+            res.end();
+        } else
         throw createError(404, 'Запрошенное дело не существует');
     } catch (err) {
         next(err);
@@ -113,16 +112,11 @@ export async function remove(req, res, next) {
             }
         }
         deleteItem(t._id, req.user.id);
-        res.redirect('/');
+        res.status(204);
+        res.end();
     } catch (err) {
         next(err);
     }
-}
-
-
-export function setOrder(req, res) {
-    res.cookie('doneAtLast', req.body.done_at_last);
-    res.redirect('/');
 }
 
 export function addendumWrapper(req, res, next) {
@@ -148,8 +142,7 @@ export function addendumWrapper(req, res, next) {
 
 export async function  mostActiveUsersPage(req, res) {
     const r = await getMostActiveUsers();
-    res.render('most-active', {
-        title: 'Самые активные пользователи',
+    res.json({
         mostActiveAll: r[0],
         mostActiveDone: r[1]
     });
