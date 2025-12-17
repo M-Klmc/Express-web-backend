@@ -16,7 +16,7 @@ const scTodo = new Schema({
     done: {
         type: Boolean,
         default: false
-    },
+    }, 
     createdAt: {
         type: Date,
         index: true,
