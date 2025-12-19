@@ -12,7 +12,7 @@ import { rm } from 'node:fs/promises';
 import { currentDir } from '../utility.js';
 
 export async function mainPage(req, res) {
-    let list = await getList(req.user.id);
+    let list = await getList(req.user._id);
     if(req.query.doneAtLast === '1') {
         list = [...list];
         list.sort((el1, el2) => {
@@ -21,7 +21,6 @@ export async function mainPage(req, res) {
             }
             return new Date(el1.createdAt) - new Date(el2.createdAt);
         })
-        res.json({ todos: list });
     }
 
     if (req.query.search) {
@@ -36,10 +35,9 @@ export async function mainPage(req, res) {
                     return false;
         });
     }
-
-    res.render('main', {
-        todos: list,
-        title: 'Главная'
+    res.json({
+    succses: true,
+    todos: list 
     });
 }
 

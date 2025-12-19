@@ -17,6 +17,7 @@ config();
 const port = process.env.PORT || 8000;
 
 const app = express();
+app.use(express.json());
 
 app.locals.appTitle = process.env.APPTITLE || 'Express';
 

@@ -27,26 +27,37 @@ const registerV = [
 export { registerV };
 
 const loginV = [
-    body('username').isString().trim().notEmpty().withMessage('Не указано имя пользователя').custom(async (value, {req}) => {
-        const user = await getUser(value);
-        if (user) {
-            req.__user = user;
-            return true;
-        } else
-            throw new Error('Пользователь с таким именем не' + 'найден...');
+    body('username')
+        .isString().trim().notEmpty()
+        .withMessage('Не указано имя пользователя')
+        .custom(async (value, { req }) => {
+            const user = await getUser(value);
+            if (user) {
+                req.__user = user; 
+                return true;
+            } else {
+                throw new Error('Пользователь с таким именем не найден...');
+            }
         }),
-    body('password').isString().trim().notEmpty().withMessage('Не указан пароль').custom(async (value, {req}) =>{
-        if(req.__user) {
+    
+    body('password')
+        .isString().trim().notEmpty()
+        .withMessage('Не указан пароль')
+        .custom(async (value, { req }) => {
+            if (!req.__user) {
+                return true; 
+            }
+
             const savedPassword = req.__user.password;
             const salt = req.__user.salt;
             const password = await pbkdf2Promisified(value, salt, 100000, 32, 'sha256');
-            if (timingSafeEqual(savedPassword, password))
+            
+            if (timingSafeEqual(savedPassword, password)) {
                 return true;
-            else
+            } else {
                 throw new Error('Неправильный пароль');
-        } else
-            return true;
-    })
+            }
+        })
 ];
 
 export { loginV };

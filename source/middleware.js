@@ -48,10 +48,9 @@ export function isGuest(req, res, next) {
 }
 
 export function isLoggedIn(req, res, next) {
-    if(req.user) {
-        res.status(403);
-        res.end();
-    } else
-        next();
+    if(!req.user) {
+        return res.status(401).json({ error: 'Неавторизованный доступ' });
+    }
+    next();
 }
 
