@@ -20,6 +20,7 @@ const port = process.env.PORT || 8000;
 
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }))
 app.use(cors())
 
 app.locals.appTitle = process.env.APPTITLE || 'Express';
