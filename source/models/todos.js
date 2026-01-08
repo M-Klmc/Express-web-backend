@@ -30,39 +30,46 @@ export async function deleteItem(id, user) {
 }
 
 export async function getMostActiveUsers() {
-    const result = [];
-
-    result[0] = await Todo.aggregate([
+    const mostActiveAll = await Todo.aggregate([
         {
             $lookup: {
                 from: 'users',
                 localField: 'user',
                 foreignField: '_id',
-                as: 'userObj'
+                as: 'userData'
             }
         },
-        { $unwind: '$userObj' },
-        { $group: { _id: '$userObj.username', cnt: { $sum: 1 } } },
+        { $unwind: '$userData' },
+        {
+            $group: {
+                _id: '$userData.username',
+                cnt: { $sum: 1 }
+            }
+        },
         { $sort: { cnt: -1 } },
-        { $limit: 3}
+        { $limit: 3 }
     ]);
 
-    result[1] = await Todo.aggregate([
+    const mostActiveDone = await Todo.aggregate([
         { $match: { done: true } },
-            {
-                $lookup: {
-                    from: 'users',
-                    localField: 'user',
-                    foreignField: '_id',
-                    as: 'userObj'
-                }
-            },
-            { $unwind: '$userObj'},
-            { $group: { _id: '$userObj.username', cnt: { $sum: 1 } } },
-            { $sort: { cnt: -1 } },
-            { $limit: 3 }
+        {
+            $lookup: {
+                from: 'users',
+                localField: 'user',
+                foreignField: '_id',
+                as: 'userData'
+            }
+        },
+        { $unwind: '$userData' },
+        {
+            $group: {
+                _id: '$userData.username',
+                cnt: { $sum: 1 }
+            }
+        },
+        { $sort: { cnt: -1 } },
+        { $limit: 3 }
     ]);
 
-    return result;
+    return [mostActiveAll, mostActiveDone];
 }
-

@@ -137,11 +137,11 @@ export function addendumWrapper(req, res, next) {
     }) 
 
 }
+export async function mostActiveUsersPage(req, res) {
 
-export async function  mostActiveUsersPage(req, res) {
-    const r = await getMostActiveUsers();
-    res.json({
-        mostActiveAll: r[0],
-        mostActiveDone: r[1]
-    });
-}
+        const r = await getMostActiveUsers();
+        res.json({
+            mostActiveAll: r[0],
+            mostActiveDone: r[1]
+        });
+    }

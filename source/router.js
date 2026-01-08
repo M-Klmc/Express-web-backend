@@ -19,7 +19,7 @@ router.use(loadCurrentUser);
 
 router.post('/register', registerV, handleErrors, registerHandler);
 router.post('/login', loginV, handleErrors, login);
-router.get('/most-active', mostActiveUsersPage);
+router.get('/mostactive', mostActiveUsersPage);
 
 router.use(isLoggedIn);
 
