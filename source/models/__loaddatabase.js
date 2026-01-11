@@ -1,15 +1,34 @@
-import { query } from "express-validator";
-import { connect, Schema, model } from "mongoose";
+import mongoose from 'mongoose'; 
 
-const dbURI = process.env.DBURI || 'mongodb://127.0.0.1:27017';
-const dbName = process.env.DBNAME || 'todos';
+const dbURI = process.env.DBURI || 'mongodb://admin:14042005Ksy@127.0.0.1:27017';
+const dbName = process.env.DBNAME || 'todos'; 
 
-const scTodo = new Schema({
+
+const connectionString = `${dbURI}/${dbName}?authSource=admin`;
+
+let Todo, User;
+
+export async function connectToDB() {
+    
+    await mongoose.connect(connectionString);
+    
+    
+    Todo = mongoose.model('Todo', scTodo) || mongoose.models.Todo;
+    User = mongoose.model('User', scUser) || mongoose.models.User;
+    
+    console.log('MongoDB connected with authentication');
+}
+
+
+export { Todo, User };
+
+
+const scTodo = new mongoose.Schema({
     title: String,
     desc: String,
     addendum: String,
     user: {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         index: true
     },
@@ -27,27 +46,27 @@ const scTodo = new Schema({
     statics: {
         async findOneAndSetDone(id, user) {
             const todo = await this.findOne({ _id: id, user: user });
-                if (todo)
-                    await todo.markAsDone();
-                return todo;
-            },
-            query: {
-                contains(val) {
-                    return this.or([
-                        { title: new RegExp(val, 'i') },
-                        { desc: new RegExp(val, 'i') }
-                    ]);
-                }
+            if (todo) await todo.markAsDone();
+            return todo;
+        },
+        query: {
+            contains(val) {
+                return this.or([
+                    { title: new RegExp(val, 'i') },
+                    { desc: new RegExp(val, 'i') }
+                ]);
             }
         }
-    });
+    }
+});
+
 scTodo.index({done: 1, createdAt: 1});
 scTodo.method('markAsDone', async function () {
     this.done = true;
     await this.save();
 });
 
-const scUser = new Schema({
+const scUser = new mongoose.Schema({
     username: {
         type: String,
         required: true,
@@ -62,17 +81,7 @@ const scUser = new Schema({
     salt: {
         type: Buffer,
         required: true
-    },
+    }
 }, {
-    versionKey: false, 
-    });
-
-let Todo, User;
-
-export async function connectToDB() {
-    await connect(dbURI, { dbName: dbName });
-    Todo = model('Todo', scTodo);
-    User = model('User', scUser)
-}
-
-export { Todo, User };
+    versionKey: false
+});
