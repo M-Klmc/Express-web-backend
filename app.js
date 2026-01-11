@@ -1,6 +1,6 @@
 import express from 'express';
 import compression from 'compression';
-import { cache } from 'express-cache-ctrl';
+import cache from 'express-cache-ctrl';
 import { config } from 'dotenv';
 
 import { connectToDB } from './source/models/__loaddatabase.js';
