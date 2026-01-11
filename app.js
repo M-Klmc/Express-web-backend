@@ -1,5 +1,6 @@
 import express from 'express';
 import compression from 'compression';
+import { cache } from 'express-cache-ctrl';
 import { config } from 'dotenv';
 
 import { connectToDB } from './source/models/__loaddatabase.js';
@@ -25,6 +26,10 @@ app.use(express.urlencoded({ extended: true }))
 app.use(cors())
 
 app.use(compression());
+app.use('/api', cache.disable());
+app.use('/static', cache.public('1y'));
+app.use('/', cache.private('10m'));
+
 
 app.locals.appTitle = process.env.APPTITLE || 'Express';
 
