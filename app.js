@@ -1,4 +1,5 @@
 import express from 'express';
+import compression from 'compression';
 import { config } from 'dotenv';
 
 import { connectToDB } from './source/models/__loaddatabase.js';
@@ -22,6 +23,8 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
 app.use(cors())
+
+app.use(compression());
 
 app.locals.appTitle = process.env.APPTITLE || 'Express';
 
