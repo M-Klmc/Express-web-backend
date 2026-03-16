@@ -1,4 +1,4 @@
-# MERN Backend — серверная часть fullstack-приложения
+# MERN Backend серверная часть fullstack-приложения
 
 Бэкенд для учебного проекта на стеке MERN (MongoDB, Express, React, Node.js).  
 Реализована JWT-аутентификация, защита маршрутов и CRUD-операции.
